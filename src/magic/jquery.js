@@ -30,3 +30,7 @@ $.fn.event = function (name) {
         }
     });
 };
+
+$.fn.field = function (name) {
+    return this.prop.bind(this, name);
+};

@@ -15,7 +15,7 @@ exports.loginForm = function (req, res) {
 exports.login = function (req, res) {
     var player;
 
-    if (player = game.findPlayer(req.name)) {
+    if (player = game.findPlayer(req.body.name)) {
         req.session.player = player;
         res.redirect('/htmud/main');
     } else {

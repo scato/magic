@@ -3,18 +3,18 @@ var Player = require('./player');
 exports.findPlayer = function (name) {
     return players.filter(function (player) {
         return player.name() === name;
-    });
+    })[0];
 };
 
-var alatar = Player.create().
+var Alatar = Player.create().
     name('Alatar').
     image('Alatar.jpg');
 
-var anborn = Player.create().
+var Anborn = Player.create().
     name('Anborn').
     image('Anborn.jpg');
 
 var players = [
-    alatar,
-    anborn
+    Alatar,
+    Anborn
 ];

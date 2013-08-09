@@ -16,51 +16,17 @@ $.fn.behavior = function (name) {
 $.fn.event = function (name) {
     var that = this;
 
-    return observable(function (action) {
-        that.on(name, action);
+    return observable(function () {
+        if (typeof arguments[0] === 'function') {
+            var action = arguments[0];
 
-        return function () {
-            that.off(name, action);
-        };
+            that.on(name, action);
+
+            return function () {
+                that.off(name, action);
+            };
+        } else {
+            that.trigger(name, arguments[0]);
+        }
     });
-};
-
-$.fn.keyhold = function (keyCode) {
-    return this.event('keydown').filter(function (e) {
-        return e.keyCode === keyCode;
-    }).til(this.event('keyup').filter(function (e) {
-        return e.keyCode === keyCode;
-    }));
-};
-
-$.fn.value = function () {
-    var that = this;
-
-    var change = that.event('change').map(function (e) {
-        return e.target.value;
-    });
-
-    if (this.is(':radio')) {
-        return function (arg) {
-            if (arg === undefined) {
-                return that.filter(':checked').val();
-            } else if (typeof arg === 'function') {
-                return change(arg);
-            } else {
-                that.each(function () {
-                    this.checked = this.value === arg;
-                });
-            }
-        };
-    } else {
-        return function (arg) {
-            if (arg === undefined) {
-                return that.val();
-            } else if (typeof arg === 'function') {
-                return change(arg);
-            } else {
-                that.val(arg);
-            }
-        };
-    }
 };

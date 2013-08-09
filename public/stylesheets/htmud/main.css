@@ -1,0 +1,19 @@
+.console {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    bottom: 40px;
+    width: 800px;
+    border: 1px solid black;
+}
+
+.command {
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+    height: 30px;
+}
+
+.command input[type="text"] {
+    width: 700px;
+}

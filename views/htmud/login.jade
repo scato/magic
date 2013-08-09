@@ -1,0 +1,11 @@
+extends ../layout
+
+block styles
+    link(rel='stylesheet', href='/stylesheets/htmud/login.css')
+
+block content
+    #htmud-login
+        form(method="POST")
+            p Enter your name:
+            input(type="text",name="name")
+            input(type="submit",value="Enter")

@@ -1,0 +1,14 @@
+extends ../layout
+
+block styles
+    link(rel='stylesheet', href='/stylesheets/demo/zoom.css')
+
+block scripts
+    script(src='/src/demo/zoom.js')
+    script require('/src/demo/zoom');
+
+block content
+    h1= title
+    p Click the button to zoom in a modal window
+    p
+        button Click me

@@ -1,0 +1,57 @@
+extends ../layout
+
+block styles
+    link(rel='stylesheet', href='/stylesheets/demo/sound.css')
+
+block scripts
+    script(src='/src/demo/sound.js')
+    script require('/src/demo/sound');
+
+block content
+    h1= title
+    p Press a key to play a sound
+    table
+        tr
+            td
+                input(type="radio", name="base", value="55")
+                span 55
+                br
+                input(type="radio", name="base", value="110")
+                span 110
+                br
+                input(type="radio", name="base", value="220")
+                span 220
+                br
+                input(type="radio", name="base", value="440", checked)
+                span 440
+                br
+            td
+                input(type="radio", name="shape", value="sine", checked)
+                span sine
+                br
+                input(type="radio", name="shape", value="square")
+                span square
+                br
+                input(type="radio", name="shape", value="sawtooth")
+                span sawtooth
+                br
+                input(type="radio", name="shape", value="triangle")
+                span triangle
+                br
+            td
+                input(type="text", name="am-freq", value="10")
+            td
+                input(type="radio", name="am-shape", value="sine", checked)
+                span sine
+                br
+                input(type="radio", name="am-shape", value="square")
+                span square
+                br
+                input(type="radio", name="am-shape", value="sawtooth")
+                span sawtooth
+                br
+                input(type="radio", name="am-shape", value="triangle")
+                span triangle
+                br
+            td
+                canvas(width="600", height="80")

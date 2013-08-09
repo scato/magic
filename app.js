@@ -5,9 +5,10 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , user = require('./routes/user')
+  , demo = require('./routes/demo')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , tao = require('./src/tao/connect');
 
 var app = express();
 
@@ -21,6 +22,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(tao.map(__dirname, '/src'));
 
 // development only
 if ('development' == app.get('env')) {
@@ -28,7 +30,8 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/demo/zoom', demo.zoom);
+app.get('/demo/sound', demo.sound);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

@@ -3,6 +3,7 @@ extends ../layout
 block styles
     link(rel='stylesheet', href='/stylesheets/htmud/main.css')
 block scripts
+    script(src='/socket.io/socket.io.js')
     script(src='/src/htmud/main.js')
     script require('/src/htmud/main');
 

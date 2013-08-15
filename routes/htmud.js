@@ -24,5 +24,8 @@ exports.login = function (req, res) {
 };
 
 exports.connect = function (socket) {
-
+    socket.emit('tell', '<div>Welcome</div>');
+    socket.on('command', function (data) {
+        socket.emit('tell', '<div>' + _.escape(data) + '</div>');
+    });
 };

@@ -13,6 +13,9 @@ var express = require('express')
 
 var app = express();
 
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -39,6 +42,10 @@ app.get('/htmud/main', htmud.main);
 app.get('/htmud/login', htmud.loginForm);
 app.post('/htmud/login', htmud.login);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+server.listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+});
+
+io.sockets.on('connection', function (socket) {
+    htmud.connect(socket);
 });

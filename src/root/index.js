@@ -10,18 +10,28 @@ module.exports = {
     def('create', function () {
         return Object.create(this);
     }).
-    def('field', function (name) {
+    def('lazy', function (name, factory) {
+        var root = this;
+        var inner;
+
         return this.def(name, function () {
-            if (!this.hasOwnProperty('_' + name)) {
-                this['_' + name] = m.field();
+            if (this === root) {
+                if (inner === undefined) {
+                    inner = factory();
+                }
+
+                return inner.apply(this, arguments);
             }
 
-            if (arguments.length === 0) {
-                return this['_' + name].apply(this, arguments);
-            } else {
-                this['_' + name].apply(this, arguments);
-
-                return this;
+            if (!this.hasOwnProperty(name)) {
+                this.lazy(name, factory);
             }
+
+            return this[name].apply(this, arguments);
+        });
+    }).
+    def('field', function (name) {
+        return this.lazy(name, function () {
+            return m.field();
         });
     });

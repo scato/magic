@@ -6,6 +6,8 @@ function field(value) {
             return value;
         } else {
             value = arguments[0];
+
+            return this;
         }
     };
 }

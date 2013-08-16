@@ -8,8 +8,11 @@
   },
   "dependencies": {
     "express": "3.2.3",
+    "browserify-middleware": "*",
     "socket.io": "*",
     "jade": "*",
-    "jasmine-node": "*"
+    "jasmine-node": "*",
+    "underscore": "*",
+    "br-jquery": "*"
   }
 }

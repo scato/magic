@@ -28,4 +28,13 @@ describe("field", function () {
 
         expect(a()).toBe(undefined);
     });
+
+    it("returns the context object when set", function () {
+        var a = field();
+        var context = {};
+
+        var result = a.call(context, 'bar');
+
+        expect(result).toBe(context);
+    });
 });

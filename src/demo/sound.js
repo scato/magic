@@ -1,5 +1,5 @@
 (function () {
-    var $          = self.jQuery,
+    var $          = require('br-jquery'),
         observable = require('../magic').observable,
         event      = require('../magic').event,
         action     = require('../magic').action,

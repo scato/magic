@@ -1,4 +1,5 @@
-var game = require('../src/htmud/game');
+var game = require('../src/htmud/game'),
+    _    = require('underscore');
 
 exports.main = function (req, res) {
     if (req.session.player) {

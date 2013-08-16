@@ -9,7 +9,7 @@ var express = require('express')
   , htmud = require('./routes/htmud')
   , http = require('http')
   , path = require('path')
-  , tao = require('./src/tao/connect');
+  , br = require('browserify-middleware');
 
 var app = express();
 
@@ -22,13 +22,13 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use('/src', br('./src', {debug: true, basedir: __dirname}));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({secret: '44M7A21G43I7C45'}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(tao.map(__dirname, '/src'));
 
 // development only
 if ('development' == app.get('env')) {

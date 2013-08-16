@@ -1,4 +1,5 @@
-var $ = self.jQuery;
+var $ = require('br-jquery'),
+    _ = require('underscore');
 
 require('../magic/jquery');
 

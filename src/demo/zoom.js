@@ -1,7 +1,7 @@
 (function (){
     "use strict";
 
-    var $ = self.jQuery;
+    var $ = require('br-jquery');
 
     var observable = require('../magic').observable,
         event      = require('../magic').event,

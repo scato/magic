@@ -1,30 +1,31 @@
 "use strict";
 
 var Root  = require('../../src/root/'),
-    field = require('../../src/magic').field;
+    list = require('../../src/magic').list;
 
 describe("Root", function () {
-    describe("field", function () {
-        it("defines a field on a prototype", function () {
+    describe("list", function () {
+        it("defines a list on a prototype", function () {
             var Proto = Root.create();
 
-            Proto.field('foo');
+            Proto.list('foo');
 
-            expect(Proto.ref('foo').is(field)).toBe(true);
+            expect(Proto.ref('foo').is(list)).toBe(true);
         });
 
         it("accepts a function for the default value", function () {
             var Proto = Root.create();
+            var foo = ['bar'];
 
-            Proto.field('foo', function () { return 'bar'; });
+            Proto.list('foo', function () { return foo; });
 
-            expect(Proto.foo()).toBe('bar');
+            expect(Proto.foo()).toEqual(foo);
         });
 
         it("returns the prototype", function () {
             var Proto = Root.create();
 
-            var result = Proto.field('foo');
+            var result = Proto.list('foo');
 
             expect(result).toBe(Proto);
         });
@@ -33,9 +34,9 @@ describe("Root", function () {
             var Proto = Root.create();
             var context = Proto.create();
 
-            Proto.field('foo');
+            Proto.list('foo');
 
-            var result = context.foo('bar');
+            var result = context.foo(['bar']);
 
             expect(result).toBe(context);
         });

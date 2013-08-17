@@ -2,8 +2,8 @@
 
 var m = require('../magic');
 
-require('./').def('field', function (name, init) {
+require('./').def('map', function (name, init) {
     return this.lazy(name, function () {
-        return init ? m.field(init()) : m.field();
+        return init ? m.map(init()) : m.map();
     });
 });

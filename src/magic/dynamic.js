@@ -2,7 +2,7 @@
 
 var magic = require('./');
 
-function behavior(initial) {
+function dynamic(initial) {
     var modifiers = magic.list();
 
     return function () {
@@ -16,4 +16,4 @@ function behavior(initial) {
     };
 }
 
-module.exports = behavior;
+module.exports = dynamic;

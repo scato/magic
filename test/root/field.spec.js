@@ -1,19 +1,16 @@
 "use strict";
 
-var Root = require('../../src/root/');
+var Root  = require('../../src/root/'),
+    field = require('../../src/magic').field;
 
 describe("Root", function () {
     describe("field", function () {
         it("defines a field on a prototype", function () {
             var Proto = Root.create();
-            var object = Proto.create();
-            var foo = {};
 
             Proto.field('foo');
 
-            object.foo(foo);
-
-            expect(object.foo()).toBe(foo);
+            expect(Proto.ref('foo').is(field)).toBe(true);
         });
 
         it("returns the prototype", function () {
@@ -24,16 +21,15 @@ describe("Root", function () {
             expect(result).toBe(Proto);
         });
 
-        it("the field returns its object", function () {
+        it("makes the getter return its context", function () {
             var Proto = Root.create();
-            var object = Proto.create();
-            var foo = {};
+            var context = Proto.create();
 
             Proto.field('foo');
 
-            var result = object.foo(foo);
+            var result = context.foo('bar');
 
-            expect(result).toBe(object);
+            expect(result).toBe(context);
         });
     });
 });

@@ -10,25 +10,42 @@ module.exports = {
     def('create', function () {
         return Object.create(this);
     }).
+    def('ref', function (name) {
+        return this[name].bind(this);
+    }).
     def('lazy', function (name, factory) {
         var root = this;
         var inner;
 
-        return this.def(name, function () {
-            if (this === root) {
+        function init(context) {
+            if (context === root) {
                 if (inner === undefined) {
                     inner = factory();
                 }
 
-                return inner.apply(this, arguments);
+                return inner;
             }
 
-            if (!this.hasOwnProperty(name)) {
-                this.lazy(name, factory);
+            if (!context.hasOwnProperty(name)) {
+                context.lazy(name, factory);
             }
 
-            return this[name].apply(this, arguments);
-        });
+            return context[name];
+        }
+
+        function outer() {
+            var inner = init(this);
+
+            return inner.apply(this, arguments);
+        }
+
+        outer.bind = function (context) {
+            var inner = init(context);
+
+            return inner.bind.apply(inner, arguments);
+        };
+
+        return this.def(name, outer);
     }).
     def('field', function (name) {
         return this.lazy(name, function () {

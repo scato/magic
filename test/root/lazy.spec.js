@@ -61,5 +61,37 @@ describe("Root", function () {
 
             expect(factory.callCount).toBe(2);
         });
+
+        it("lets you access the result of the factory through ref", function () {
+            var Proto = Root.create();
+
+            var bounds = [function () {}, function () {}, function () {}];
+            var methods = bounds.map(function (bound) {
+                var method = function () {};
+
+                method.bind = function () {
+                    return bound;
+                };
+
+                return method;
+            });
+
+            var factory = function () {
+                return methods.shift();
+            };
+
+            Proto.lazy('foo', factory);
+
+            var test1 = Proto.create();
+            var test2 = Proto.create();
+
+            Proto.foo();
+            test1.foo();
+            test2.foo();
+
+            expect(Proto.ref('foo')).toBe(bounds[0]);
+            expect(test1.ref('foo')).toBe(bounds[1]);
+            expect(test2.ref('foo')).toBe(bounds[2]);
+        });
     });
 });

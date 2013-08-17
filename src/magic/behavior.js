@@ -2,29 +2,22 @@
 
 var magic = require('./');
 
-function modifier(initial) {
-    if (typeof initial === 'function') {
-        return initial;
-    } else {
-        return function () {
-            return initial;
-        };
-    }
+function behavior(signal) {
+    return create(function () {
+        if (typeof arguments[0] === 'function') {
+            signal = arguments[0];
+        } else {
+            return signal(arguments[0]);
+        }
+    });
 }
 
-function behavior(value) {
-    var modifiers = magic.list();
-    var initial = modifier(value);
-
-    return function () {
-        if (arguments.length === 0) {
-            return modifiers().reduce(function (initial, modifier) {
-                return modifier(initial);
-            }, initial());
-        } else {
-            return modifiers(modifier(arguments[0]));
-        }
+function create(left) {
+    left.is = function (right) {
+        return right === behavior;
     };
+
+    return left;
 }
 
 module.exports = behavior;

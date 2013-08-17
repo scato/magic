@@ -9,53 +9,37 @@ describe("behavior", function () {
         expect(typeof a).toBe('function');
     });
 
-    it("has an initial getter", function () {
-        var a = behavior(function () {
-            return "foo";
+    it("has an initial signal", function () {
+        var a = behavior(function (t) {
+            return 42;
         });
 
-        expect(a()).toBe("foo");
+        expect(a(0)).toBe(42);
     });
 
-    it("can also have an initial value", function () {
-        var a = behavior("foo");
+    it("switches to a new signal when given one", function () {
+        var a = behavior(function (t) {
+            return 42;
+        });
 
-        expect(a()).toBe("foo");
+        a(function (t) {
+            return t / 2;
+        });
+
+        expect(a(10)).toBe(5);
     });
 
-    it("acts as modify/revert when given a function", function () {
-        var a = behavior("");
+    describe("is", function () {
+        it("returns true if given behavior", function () {
+            var a = behavior();
 
-        var foo = function (initial) {
-            return "foo";
-        };
+            expect(a.is(behavior)).toBe(true);
+        });
 
-        var bar = function (initial) {
-            return initial + "bar";
-        };
+        it("returns false if given something else", function () {
+            var a = behavior();
 
-        var undo = a(foo);
-
-        expect(a()).toBe("foo");
-
-        a(bar);
-
-        expect(a()).toBe("foobar");
-
-        undo();
-
-        expect(a()).toBe("bar");
-    });
-
-    it("acts as replace/revert when given a non-function", function () {
-        var a = behavior("foo");
-
-        var undo = a("bar");
-
-        expect(a()).toBe("bar");
-
-        undo();
-
-        expect(a()).toBe("foo");
+            expect(a.is({})).toBe(false);
+        });
     });
 });

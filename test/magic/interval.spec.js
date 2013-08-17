@@ -1,7 +1,7 @@
 "use strict";
 
-var phase    = require('../../src/magic/').phase,
-    behavior = require('../../src/magic/').behavior;
+var phase   = require('../../src/magic/').phase,
+    dynamic = require('../../src/magic/').dynamic;
 
 describe("interval", function () {
     it("has a start", function () {
@@ -55,10 +55,12 @@ describe("interval", function () {
         var b = phase();
         var c = a.or(b);
 
-        var d = behavior(false);
+        var d = dynamic(false);
 
         c(function () {
-            return d(true);
+            return d(function () {
+                return true;
+            });
         });
 
         expect(d()).toBe(false);
@@ -78,10 +80,12 @@ describe("interval", function () {
         var b = phase();
         var c = a.and(b);
 
-        var d = behavior(false);
+        var d = dynamic(false);
 
         c(function () {
-            return d(true);
+            return d(function () {
+                return true;
+            });
         });
 
         expect(d()).toBe(false);

@@ -1,8 +1,8 @@
 "use strict";
 
-var event    = require('../../src/magic/').event,
-    behavior = require('../../src/magic/').behavior,
-    phase    = require('../../src/magic/').phase;
+var event   = require('../../src/magic/').event,
+    dynamic = require('../../src/magic/').dynamic,
+    phase   = require('../../src/magic/').phase;
 
 describe("observable", function () {
     it("can be mapped", function () {
@@ -129,7 +129,7 @@ describe("observable", function () {
         var b = event();
         var c = a.til(b);
 
-        var d = behavior(0);
+        var d = dynamic(0);
 
         c(function () {
             return d(function (x) {

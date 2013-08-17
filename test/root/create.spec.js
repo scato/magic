@@ -15,5 +15,11 @@ describe("Root", function () {
             expect(object.isPrototypeOf(Root)).toBe(false);
             expect(object.isPrototypeOf(Proto)).toBe(false);
         });
+
+        it("sets a base property on the instance", function () {
+            var Proto = Root.create();
+
+            expect(Proto.base).toBe(Root);
+        });
     });
 });

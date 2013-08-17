@@ -1,5 +1,9 @@
 "use strict";
 
 require('./').def('create', function () {
-    return Object.create(this);
+    var clone = Object.create(this);
+
+    clone.base = this;
+
+    return clone;
 });

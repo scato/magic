@@ -9,5 +9,6 @@ exports.field      = require('./field');
 exports.interval   = require('./interval');
 exports.list       = require('./list');
 exports.observable = require('./observable');
+exports.map        = require('./map');
 exports.phase      = require('./phase');
 exports.reactive   = require('./reactive');

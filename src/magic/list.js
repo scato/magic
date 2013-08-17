@@ -5,11 +5,11 @@ var magic = require('./');
 function list(value) {
     var elements = magic.field(value || []);
 
-    return function () {
+    return create(function () {
         if (arguments.length === 0) {
             return elements().slice();
         } else if(arguments[0] instanceof Array) {
-            return elements(arguments[0]);
+            return elements.apply(this, arguments);
         } else {
             var array = elements();
             var element = arguments[0];
@@ -25,7 +25,19 @@ function list(value) {
                 }
             };
         }
+    });
+}
+
+function create(left) {
+    left.is = function (right) {
+        return right === list;
     };
+
+    left.bind = function () {
+        return create(Function.prototype.bind.apply(left, arguments));
+    };
+
+    return left;
 }
 
 module.exports = list;

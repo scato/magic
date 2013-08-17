@@ -2,6 +2,7 @@
 
 exports.action     = require('./action');
 exports.behavior   = require('./behavior');
+exports.dynamic    = require('./dynamic');
 exports.effect     = require('./effect');
 exports.event      = require('./event');
 exports.field      = require('./field');

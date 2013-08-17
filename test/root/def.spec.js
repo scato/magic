@@ -24,5 +24,26 @@ describe("Root", function () {
 
             expect(result).toBe(Proto);
         });
+
+        it("cannot be used if the method already exists on the same prototype", function () {
+            var Proto = Root.create();
+
+            Proto.def('foo', function () {});
+
+            expect(function () {
+                Proto.def('foo', function () {});
+            }).toThrow(new Error("The method 'foo' already exists on this prototype"));
+        });
+
+        it("cannot be used if the method already exists on a base prototype", function () {
+            var Proto = Root.create();
+
+            Proto.def('foo', function () {});
+
+            expect(function () {
+                var Deriv = Proto.create()
+                    .def('foo', function () {});
+            }).toThrow(new Error("The method 'foo' already exists on this prototype"));
+        });
     });
 });

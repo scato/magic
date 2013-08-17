@@ -2,6 +2,10 @@ var m = require('../magic');
 
 module.exports = {
         def: function (name, value) {
+            if (name in this) {
+                throw new Error("The method 'foo' already exists on this prototype");
+            }
+
             this[name] = value;
 
             return this;
@@ -45,10 +49,29 @@ module.exports = {
             return inner.bind.apply(inner, arguments);
         };
 
-        return this.def(name, outer);
+        this[name] = outer;
+
+        return this;
     }).
     def('field', function (name) {
         return this.lazy(name, function () {
             return m.field();
         });
+    }).
+    def('override', function (name, factory) {
+        if (!(name in this)) {
+            throw new Error("Cannot override non-existent method '" + name + "'");
+        }
+
+        if (this.hasOwnProperty(name)) {
+            throw new Error("The method 'foo' already exists on this prototype");
+        }
+
+        var base = this[name];
+
+        this[name] = function() {
+            factory(base.bind(this)).apply(this, arguments);
+        };
+
+        return this;
     });

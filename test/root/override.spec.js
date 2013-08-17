@@ -38,18 +38,21 @@ describe("Root", function () {
                     return function (arg) {
                         deriv.call(this, arg);
                         base(arg, 'bar');
+                        return 42;
                     };
                 });
 
             var context = Deriv.create();
 
-            context.foo('foo');
+            var result = context.foo('foo');
 
             expect(base.calls[0].object).toBe(context);
             expect(base).toHaveBeenCalledWith('foo', 'bar');
 
             expect(deriv.calls[0].object).toBe(context);
             expect(deriv).toHaveBeenCalledWith('foo');
+
+            expect(result).toBe(42);
         });
 
         it("returns the prototype", function () {

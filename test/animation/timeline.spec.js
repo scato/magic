@@ -1,6 +1,6 @@
 "use strict";
 
-var Timeline = require('../../src/timeline'),
+var Timeline = require('../../src/animation/timeline'),
     field = require('../../src/magic').field,
     map = require('../../src/magic').map;
 

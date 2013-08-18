@@ -54,17 +54,28 @@ describe("Transition", function () {
         });
     });
 
+    describe("delay", function () {
+        it("is a field", function () {
+            expect(Transition.ref('delay').is(field)).toBe(true);
+        });
+
+        it("has a default value of 0", function () {
+            expect(Transition.delay()).toBe(0);
+        });
+    });
+
     describe("signal", function () {
         it("returns a function from time to progress", function () {
             var transition = Transition.create().
                 duration(500).
-                timing(Transition.sineIn);
+                timing(Transition.sineIn).
+                delay(100);
 
             var signal = transition.signal();
 
-            expect(signal(0) * 100).toBe(0);
-            expect(Math.round(signal(250) * 100)).toBe(71);
-            expect(signal(500) * 100).toBe(100);
+            expect(signal(100) * 100).toBe(0);
+            expect(Math.round(signal(350) * 100)).toBe(71);
+            expect(signal(600) * 100).toBe(100);
         });
 
         it("returns 0 for times smaller than 0", function () {

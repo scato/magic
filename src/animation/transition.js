@@ -20,11 +20,13 @@ module.exports = Root.create().
     }).
     field('duration').
     field('timing').
+    field('delay', function () { return 0; }).
     def('signal', function () {
         var duration = this.duration();
         var timing = this.timing();
+        var delay = this.delay();
 
         return function (t) {
-            return timing(Math.max(0, Math.min(t / duration, 1)));
+            return timing(Math.max(0, Math.min((t - delay) / duration, 1)));
         };
     });

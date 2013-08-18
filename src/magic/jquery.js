@@ -1,16 +1,23 @@
-var $ = self.jQuery,
+var $ = require('br-jquery'),
     animation  = require('./window').animation,
     observable = require('./').observable,
-    interval = require('./').interval;
+    interval = require('./').interval,
+    behavior = require('./').behavior;
 
 $.fn.behavior = function (name) {
+    var initial = this.css(name);
+
+    var value = behavior(function (t) {
+        return initial;
+    });
+
     var that = this;
 
-    return function (value) {
-        return animation(function () {
-            that.css(name, value());
-        });
-    };
+    animation(function () {
+        that.css(name, value(Date.now()));
+    });
+
+    return value;
 };
 
 $.fn.event = function (name) {

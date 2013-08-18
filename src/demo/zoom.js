@@ -13,6 +13,8 @@
 
     require('../magic/jquery');
 
+    var Timeline = require('../animation/timeline');
+
     function include($el) {
         $el.appendTo('body');
         return function () {
@@ -24,55 +26,23 @@
         var start = 0, last = Date.now();
 
         return [
-            on(active.start().merge(active.end()), function () {
-                start = progress();
+            on(active.start(), function () {
+                start = progress(Date.now());
                 last = Date.now();
+
+                progress(function (t) {
+                    return Math.max(0, Math.min(start + (t - last) / duration, 1));
+                });
             }),
-            progress(function () {
-                return Math.max(0, Math.min(start - (Date.now() - last) / duration, 1));
-            }),
-            during(active, function () {
-                return progress(function () {
-                    return Math.max(0, Math.min(start + (Date.now() - last) / duration, 1));
+            on(active.end(), function () {
+                start = progress(Date.now());
+                last = Date.now();
+
+                progress(function (t) {
+                    return Math.max(0, Math.min(start - (t - last) / duration, 1));
                 });
             })
         ].reduce(action.merge);
-    }
-
-    function stepIn(progress, from, to) {
-        return function () {
-            return progress() === 0 ? from : to;
-        };
-    }
-
-    function stepOut(progress, from, to) {
-        return function () {
-            return progress() === 1 ? to : from;
-        };
-    }
-
-    function ramp(progress, from, to) {
-         return function () {
-             if (progress() < from) {
-                 return 0;
-             } else if(progress() < to) {
-                 return (progress() - from) / (to - from);
-             } else {
-                 return 1;
-             }
-         };
-    }
-
-    function linear(progress, from, to) {
-        return function () {
-            return from + progress() * (to - from);
-        };
-    }
-
-    function sineIn(progress, from, to) {
-        return function () {
-            return from + Math.sin(progress() * Math.PI / 2) * (to - from);
-        };
     }
 
     function overlay(maxOpacity, close) {
@@ -81,15 +51,33 @@
             click(close);
 
         var active = phase();
-        var progress = behavior();
+        var progress = behavior(function (t) {
+            return 0;
+        });
 
         transition(active, progress, 1000);
 
-        var display = stepIn(ramp(progress, 0, 0.5), 'none', 'block');
-        var opacity = linear(ramp(progress, 0, 0.5), 0, maxOpacity);
+        var timeline = Timeline.create().
+            frame({display: 'none'}).
+            stepIn(500).
+            frame({display: 'block'});
 
-        $overlay.behavior('display')(display);
-        $overlay.behavior('opacity')(opacity);
+        var timeline2 = Timeline.create().
+            frame({opacity: 0}).
+            linear(500).
+            frame({opacity: maxOpacity});
+
+        var display = timeline.prop('display');
+        var opacity = timeline2.prop('opacity');
+
+        function wrap(signal) {
+            return function (t) {
+                return signal(progress(t) * 1000);
+            };
+        }
+
+        $overlay.behavior('display')(wrap(display));
+        $overlay.behavior('opacity')(wrap(opacity));
 
         include($overlay);
 
@@ -109,30 +97,62 @@
             appendTo($modal);
 
         var active = phase();
-        var progress = behavior();
+        var progress = behavior(function (t) {
+            return 0;
+        });
 
         transition(active, progress, 1000);
 
-        var display = stepIn(ramp(progress, 0.5, 1), 'none', 'block');
-        var height = sineIn(ramp(progress, 0.5, 0.75), 0, maxHeight);
-        var width = sineIn(ramp(progress, 0.75, 1), 0, maxWidth);
+        var timeline = Timeline.create().
+            frame({
+                display: 'none',
+                height: 0,
+                width: 0
+            }).
+            stepOut(500).
+            frame({
+                display: 'block'
+            }).
+            sineIn(250).
+            frame({
+                height: maxHeight
+            }).
+            sineIn(250).
+            frame({
+                width: maxWidth
+            });
 
-        var marginTop = function () {
-            return -height() / 2;
+        function wrap(signal) {
+            return function (t) {
+                return signal(progress(t) * 1000);
+            };
+        }
+
+        var display = timeline.prop('display');
+        var height = timeline.prop('height');
+        var width = timeline.prop('width');
+
+        var marginTop = function (t) {
+            return -height(t) / 2;
         };
 
-        var marginLeft = function () {
-            return -width() / 2;
+        var marginLeft = function (t) {
+            return -width(t) / 2;
         };
 
-        var content = stepOut(ramp(progress, 0.5, 1), 'none', 'block');
+        var timeline2 = Timeline.create().
+            frame({display: 'none'}).
+            stepOut(1000).
+            frame({display: 'block'});
 
-        $modal.behavior('display')(display);
-        $modal.behavior('height')(height);
-        $modal.behavior('width')(width);
-        $modal.behavior('marginTop')(marginTop);
-        $modal.behavior('marginLeft')(marginLeft);
-        $content.behavior('display')(content);
+        var content = timeline2.prop('display');
+
+        $modal.behavior('display')(wrap(display));
+        $modal.behavior('height')(wrap(height));
+        $modal.behavior('width')(wrap(width));
+        $modal.behavior('marginTop')(wrap(marginTop));
+        $modal.behavior('marginLeft')(wrap(marginLeft));
+        $content.behavior('display')(wrap(content));
 
         include($modal);
 
@@ -143,7 +163,7 @@
     var close = event();
 
     active(overlay(0.5, close));
-    active(modal(300, 200, 'Zoomah!'));
+//    active(modal(300, 200, 'Zoomah!'));
 
     $('button').click(function () {
         close.one()(active());

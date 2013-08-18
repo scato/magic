@@ -16,10 +16,10 @@ module.exports = Root.create().
             var value = properties[key];
 
             if (initial !== undefined && transition !== undefined) {
-                var progress = transition.signal();
-
                 prop(key, function (t) {
-                    return initial(t) + (value - initial(t)) * progress(t);
+                    var signal = transition.signal(initial(t), value);
+
+                    return signal(t);
                 });
             } else {
                 prop(key, function (t) {

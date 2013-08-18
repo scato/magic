@@ -21,12 +21,27 @@ module.exports = Root.create().
     field('duration').
     field('timing').
     field('delay', function () { return 0; }).
-    def('signal', function () {
+    def('progress', function () {
         var duration = this.duration();
         var timing = this.timing();
         var delay = this.delay();
 
         return function (t) {
             return timing(Math.max(0, Math.min((t - delay) / duration, 1)));
+        };
+    }).
+    def('signal', function (from, to) {
+        var progress = this.progress();
+
+        return function (t) {
+            var f = progress(t);
+
+            if (f === false) {
+                return from;
+            } else if (f === true) {
+                return to;
+            } else {
+                return from + (to - from) * f;
+            }
         };
     });

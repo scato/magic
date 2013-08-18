@@ -64,6 +64,23 @@ describe("Timeline", function () {
             expect(x(1000)).toBe(150);
         });
 
+        it("works with step functions", function () {
+            var timeline = Timeline.create().
+                frame({
+                    x: 'on'
+                }).
+                tween(Transition.stepOut, 500).
+                frame({
+                    x: 'off'
+                });
+
+            var x = timeline.prop('x');
+
+            expect(x(0)).toBe('on');
+            expect(x(250)).toBe('on');
+            expect(x(500)).toBe('off');
+        });
+
         it("returns the timeline", function () {
             var timeline = Timeline.create();
 
@@ -84,7 +101,7 @@ describe("Timeline", function () {
             expect(timeline.duration()).toBe(500);
         });
 
-        it("adds sets the transition for the tween", function () {
+        it("sets the transition for the tween", function () {
             var timeline = Timeline.create().
                 frame({'x': 10}).
                 tween(Transition.linear, 500).

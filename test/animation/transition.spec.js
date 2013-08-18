@@ -65,17 +65,17 @@ describe("Transition", function () {
     });
 
     describe("signal", function () {
-        it("returns a function from time to progress", function () {
+        it("returns a function from time to a value within a range", function () {
             var transition = Transition.create().
                 duration(500).
                 timing(Transition.sineIn).
                 delay(100);
 
-            var signal = transition.signal();
+            var signal = transition.signal(0, 100);
 
-            expect(signal(100) * 100).toBe(0);
-            expect(Math.round(signal(350) * 100)).toBe(71);
-            expect(signal(600) * 100).toBe(100);
+            expect(signal(100)).toBe(0);
+            expect(Math.round(signal(350))).toBe(71);
+            expect(signal(600)).toBe(100);
         });
 
         it("returns 0 for times smaller than 0", function () {
@@ -83,9 +83,9 @@ describe("Transition", function () {
                 duration(500).
                 timing(Transition.sineIn);
 
-            var signal = transition.signal();
+            var signal = transition.signal(0, 100);
 
-            expect(signal(-1) * 100).toBe(0);
+            expect(signal(-1)).toBe(0);
         });
 
         it("returns 0 for times greater than the duration", function () {
@@ -93,9 +93,9 @@ describe("Transition", function () {
                 duration(500).
                 timing(Transition.sineIn);
 
-            var signal = transition.signal();
+            var signal = transition.signal(0, 100);
 
-            expect(signal(501) * 100).toBe(100);
+            expect(signal(501)).toBe(100);
         });
     });
 });

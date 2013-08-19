@@ -13,7 +13,8 @@
 
     require('../magic/jquery');
 
-    var Timeline = require('../animation/timeline');
+    var Timeline = require('../animation/timeline'),
+        Control  = require('../animation/control');
 
     function include($el) {
         $el.appendTo('body');
@@ -51,11 +52,8 @@
             click(close);
 
         var active = phase();
-        var progress = behavior(function (t) {
-            return 0;
-        });
 
-        //transition(active, progress, 1000);
+        var shuttle = Control.shuttle(active, 1000);
 
         var timeline = Timeline.create().
             frame({display: 'none'}).
@@ -70,33 +68,6 @@
         var display = timeline.signal('display');
         var opacity = timeline2.signal('opacity');
 
-//        function wrap(signal) {
-//            return function (t) {
-//                return signal(progress(t) * 1000);
-//            };
-//        }
-
-        //$overlay.behavior('display')(wrap(display));
-        //$overlay.behavior('opacity')(wrap(opacity));
-
-        active.start()(function () {
-            var now = Date.now();
-            var last = progress(now);
-
-            progress(function (t) {
-                return Math.min(last + (t - now), 1000);
-            });
-        });
-
-        active.end()(function () {
-            var now = Date.now();
-            var last = progress(now);
-
-            progress(function (t) {
-                return Math.max(0, last - (t - now));
-            });
-        });
-
         function map(left, right) {
             return function (t) {
                 return right(left(t));
@@ -105,8 +76,8 @@
 
         include($overlay);
 
-        $overlay.behavior('display')(map(progress, display));
-        $overlay.behavior('opacity')(map(progress, opacity));
+        $overlay.behavior('display')(map(shuttle, display));
+        $overlay.behavior('opacity')(map(shuttle, opacity));
 
         return active;
     }

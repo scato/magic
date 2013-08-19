@@ -55,7 +55,7 @@
             return 0;
         });
 
-        transition(active, progress, 1000);
+        //transition(active, progress, 1000);
 
         var timeline = Timeline.create().
             frame({display: 'none'}).
@@ -67,19 +67,46 @@
             linear(500).
             frame({opacity: maxOpacity});
 
-        var display = timeline.prop('display');
-        var opacity = timeline2.prop('opacity');
+        var display = timeline.signal('display');
+        var opacity = timeline2.signal('opacity');
 
-        function wrap(signal) {
+//        function wrap(signal) {
+//            return function (t) {
+//                return signal(progress(t) * 1000);
+//            };
+//        }
+
+        //$overlay.behavior('display')(wrap(display));
+        //$overlay.behavior('opacity')(wrap(opacity));
+
+        active.start()(function () {
+            var now = Date.now();
+            var last = progress(now);
+
+            progress(function (t) {
+                return Math.min(last + (t - now), 1000);
+            });
+        });
+
+        active.end()(function () {
+            var now = Date.now();
+            var last = progress(now);
+
+            progress(function (t) {
+                return Math.max(0, last - (t - now));
+            });
+        });
+
+        function map(left, right) {
             return function (t) {
-                return signal(progress(t) * 1000);
+                return right(left(t));
             };
         }
 
-        $overlay.behavior('display')(wrap(display));
-        $overlay.behavior('opacity')(wrap(opacity));
-
         include($overlay);
+
+        $overlay.behavior('display')(map(progress, display));
+        $overlay.behavior('opacity')(map(progress, opacity));
 
         return active;
     }
@@ -128,9 +155,9 @@
             };
         }
 
-        var display = timeline.prop('display');
-        var height = timeline.prop('height');
-        var width = timeline.prop('width');
+        var display = timeline.signal('display');
+        var height = timeline.signal('height');
+        var width = timeline.signal('width');
 
         var marginTop = function (t) {
             return -height(t) / 2;
@@ -145,7 +172,7 @@
             stepOut(1000).
             frame({display: 'block'});
 
-        var content = timeline2.prop('display');
+        var content = timeline2.signal('display');
 
         $modal.behavior('display')(wrap(display));
         $modal.behavior('height')(wrap(height));

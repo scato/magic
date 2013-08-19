@@ -6,23 +6,23 @@ var Root = require('../root'),
 module.exports = Root.create().
     field('duration', function () { return 0; }).
     field('transition').
-    map('prop').
-    def('frame', function (properties) {
-        var prop = this.ref('prop');
+    map('signal').
+    def('frame', function (values) {
+        var signal = this.ref('signal');
         var transition = this.transition();
 
-        Object.keys(properties).forEach(function (key) {
-            var initial = prop(key);
-            var value = properties[key];
+        Object.keys(values).forEach(function (key) {
+            var initial = signal(key);
+            var value = values[key];
 
             if (initial !== undefined && transition !== undefined) {
-                prop(key, function (t) {
+                signal(key, function (t) {
                     var signal = transition.signal(initial(t), value);
 
                     return signal(t);
                 });
             } else {
-                prop(key, function (t) {
+                signal(key, function (t) {
                     return value;
                 });
             }

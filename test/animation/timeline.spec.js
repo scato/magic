@@ -16,9 +16,9 @@ describe("Timeline", function () {
         });
     });
 
-    describe("prop", function () {
+    describe("signal", function () {
         it("is a map", function () {
-            expect(Timeline.ref('prop').is(map)).toBe(true);
+            expect(Timeline.ref('signal').is(map)).toBe(true);
         });
     });
 
@@ -36,7 +36,7 @@ describe("Timeline", function () {
                 x: 100
             });
 
-            var x = timeline.prop('x');
+            var x = timeline.signal('x');
 
             expect(x(0)).toBe(100);
         });
@@ -55,7 +55,7 @@ describe("Timeline", function () {
                     x: 150
                 });
 
-            var x = timeline.prop('x');
+            var x = timeline.signal('x');
 
             expect(x(0)).toBe(100);
             expect(x(250)).toBe(150);
@@ -74,7 +74,7 @@ describe("Timeline", function () {
                     x: 'off'
                 });
 
-            var x = timeline.prop('x');
+            var x = timeline.signal('x');
 
             expect(x(0)).toBe('on');
             expect(x(250)).toBe('on');

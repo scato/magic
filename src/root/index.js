@@ -2,6 +2,7 @@ module.exports = {};
 
 require('./def');
 
+require('./behavior');
 require('./create');
 require('./field');
 require('./is');

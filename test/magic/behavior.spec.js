@@ -29,6 +29,15 @@ describe("behavior", function () {
         expect(a(10)).toBe(5);
     });
 
+    it("returns the context object when set", function () {
+        var a = behavior();
+        var context = {};
+
+        var result = a.call(context, function () { return 'bar'; });
+
+        expect(result).toBe(context);
+    });
+
     describe("is", function () {
         it("returns true if given behavior", function () {
             var a = behavior();
@@ -40,6 +49,24 @@ describe("behavior", function () {
             var a = behavior();
 
             expect(a.is({})).toBe(false);
+        });
+    });
+
+    describe("bind", function () {
+        it("returns a bound function", function () {
+            var context = {};
+            var a = behavior();
+            var b = a.bind(context);
+
+            expect(b(function () { return 'foo'; })).toBe(context);
+        });
+
+        it("returns a behavior", function () {
+            var context = {};
+            var a = behavior();
+            var b = a.bind(context);
+
+            expect(b.is(behavior)).toBe(true);
         });
     });
 });

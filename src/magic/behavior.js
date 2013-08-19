@@ -6,6 +6,8 @@ function behavior(signal) {
     return create(function () {
         if (typeof arguments[0] === 'function') {
             signal = arguments[0];
+
+            return this;
         } else {
             return signal(arguments[0]);
         }
@@ -15,6 +17,10 @@ function behavior(signal) {
 function create(left) {
     left.is = function (right) {
         return right === behavior;
+    };
+
+    left.bind = function () {
+        return create(Function.prototype.bind.apply(left, arguments));
     };
 
     return left;

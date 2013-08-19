@@ -69,4 +69,20 @@ describe("behavior", function () {
             expect(b.is(behavior)).toBe(true);
         });
     });
+
+    describe("map", function () {
+        it("returns a function of time for which the outcomes are passed through a function", function () {
+            var a = behavior(function (t) {
+                return t + ': foo';
+            });
+
+            var b = a.map(function (x) {
+                return x + 'bar';
+            });
+
+            expect(b(42)).toBe('42: foobar');
+        });
+
+        it("returns a behavior", function () {});
+    });
 });

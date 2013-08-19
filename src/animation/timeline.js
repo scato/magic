@@ -55,4 +55,13 @@ module.exports = Root.create().
     }).
     def('stepOut', function (duration) {
         return this.tween(Transition.stepOut, duration);
+    }).
+    def('playback', function ($element, control) {
+        var signal = this.ref('signal');
+
+        Object.keys(signal()).forEach(function (key) {
+            var value = control.map(signal(key));
+
+            $element.behavior(key)(value);
+        });
     });

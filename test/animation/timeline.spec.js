@@ -142,4 +142,72 @@ describe("Timeline", function () {
             });
         });
     });
+
+    describe("playback", function () {
+        it("maps the control using each signal", function () {
+            var $element = {
+                behavior: function () {
+                    return function() {};
+                }
+            };
+
+            var control = {
+                map: function () {}
+            };
+
+            spyOn(control, 'map');
+
+            var timeline = Timeline.create().
+                frame({foo: 'bar'});
+
+            timeline.playback($element, control);
+
+            var signal = timeline.signal('foo');
+
+            expect(control.map).toHaveBeenCalledWith(signal);
+        });
+
+        it("takes a behavior from the element", function () {
+            var $element = {
+                behavior: function () {
+                    return function() {};
+                }
+            };
+
+            var control = {
+                map: function () {}
+            };
+
+            spyOn($element, 'behavior').andCallThrough();
+
+            Timeline.create().
+                frame({foo: 'bar'}).
+                playback($element, control);
+
+            expect($element.behavior).toHaveBeenCalledWith('foo');
+        });
+
+        it("sets the signal on the behavior", function () {
+            var it = jasmine.createSpy('it');
+            var mapped = function () {};
+
+            var $element = {
+                behavior: function () {
+                    return it;
+                }
+            };
+
+            var control = {
+                map: function () {
+                    return mapped;
+                }
+            };
+
+            Timeline.create().
+                frame({foo: 'bar'}).
+                playback($element, control);
+
+            expect(it).toHaveBeenCalledWith(mapped);
+        });
+    });
 });

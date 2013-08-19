@@ -23,6 +23,12 @@ function create(left) {
         return create(Function.prototype.bind.apply(left, arguments));
     };
 
+    left.map = function (lambda) {
+        return function (t) {
+            return lambda(left(t));
+        };
+    };
+
     return left;
 }
 

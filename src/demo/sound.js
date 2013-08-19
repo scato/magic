@@ -4,7 +4,7 @@
         event      = require('../magic').event,
         action     = require('../magic').action,
         phase      = require('../magic').phase,
-        behavior   = require('../magic').behavior,
+        dynamic   = require('../magic').dynamic,
         on         = require('../magic').effect.on,
         during     = require('../magic').effect.during;
 
@@ -118,7 +118,7 @@
 
         var context = new self.webkitAudioContext();
 
-        var signal = behavior(0);
+        var signal = dynamic(0);
         var sample = 0;
         var rate = context.sampleRate;
 

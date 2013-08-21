@@ -2,56 +2,70 @@
 
 var magic = require('./');
 
-function on(observable, affector) {
-    var undo = magic.event();
+var exit = magic.event();
+var undo = exit;
 
-    undo(observable(function (value) {
-        undo(magic.action(affector(value)));
+function have(cancel) {
+    undo(cancel);
+}
+
+function on(observable, block) {
+    var inner = undo;
+    
+    exit(observable(function (value) {
+        var outer = undo;
+        undo = inner;
+        block(value);
+        undo = outer;
     }));
-
-    return undo;
 }
 
-function once(observable, affector) {
-    return on(observable.one(), affector);
+function once(observable, block) {
+    on(observable.one(), block);
 }
 
-function until(observable, listener) {
-    var undo = magic.event();
-
-    observable.merge(undo).one()(listener);
-
-    return undo;
+function until(observable, block) {
+    var inner = magic.event();
+    var outer = undo;
+    
+    undo = inner;
+    block();
+    undo = outer;
+    
+    observable(inner);
+    undo(inner);
 }
 
-function during(interval, affector) {
-    var undo = magic.event();
-
-    undo(interval(function (value) {
-        var cancel = affector(value);
-
-        undo(cancel);
-
-        return cancel;
+function during(interval, block) {
+    var outer = undo;
+    
+    outer(interval(function (value) {
+        var inner = magic.event();
+        
+        outer(inner);
+        
+        undo = inner;
+        block(value);
+        undo = outer;
+        
+        return inner;
     }));
-
-    return undo;
 }
 
-function between(interval, affector) {
-    var undo = magic.event();
+function between(interval, block) {
+    until(interval.start(), block);
 
-    undo(until(interval.start(), affector()));
-
-    undo(once(interval.end(), function () {
-        return between(interval, affector);
-    }));
-
-    return undo;
+    once(interval.end(), function () {
+        between(interval, block);
+    });
 }
 
+exports.exit    = exit;
+
+exports.have    = have;
 exports.on      = on;
 exports.once    = once;
 exports.until   = until;
 exports.during  = during;
 exports.between = between;
+

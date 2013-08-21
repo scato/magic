@@ -1,8 +1,9 @@
 "use strict";
 
 var Root = require('../root');
+var Json = require('./json');
 
-module.exports = Root.create().
+module.exports = Json(Root.create().
     list('fields').
     override('field', function (base) {
         return function (name, init) {
@@ -19,7 +20,5 @@ module.exports = Root.create().
             
             return clone;
         };
-    });
-
-require('./entity.json');
+    }));
 

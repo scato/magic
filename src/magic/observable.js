@@ -82,29 +82,36 @@ function observable(left) {
 
     left.til = function (right) {
         return magic.interval(function repeat(affector) {
-            return magic.effect.once(left, function (value) {
-                return magic.action.merge(
-                    magic.effect.until(right, affector(value)),
+            return magic.effect.permanent(function () {
+                magic.effect.once(left, function (value) {
+                    magic.effect.until(right, function () {
+                        magic.effect.have(affector(value));
+                    });
+                    
                     magic.effect.once(right, function () {
-                        return repeat(affector);
-                    })
-                );
+                        magic.effect.have(repeat(affector));
+                    });
+                });
             });
         });
     };
 
     left.during = function (right) {
         return magic.observable(function (listener) {
-            return magic.effect.during(right, function () {
-                return left(listener);
+            return magic.effect.permanent(function () {
+                magic.effect.during(right, function () {
+                    magic.effect.have(left(listener));
+                });
             });
         });
     };
 
     left.between = function (right) {
         return magic.observable(function (listener) {
-            return magic.effect.between(right, function () {
-                return left(listener);
+            return magic.effect.permanent(function () {
+                magic.effect.between(right, function () {
+                    magic.effect.have(left(listener));
+                });
             });
         });
     };

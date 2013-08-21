@@ -17,20 +17,26 @@
         Control  = require('../animation/control');
 
     function overlay(maxOpacity, close) {
+        // create the overlay
         var $overlay = $('<div></div>').
             addClass('overlay').
             click(close).
             appendTo($('body'));
 
+        // create a phase that determines when the overlay should be shown
         var active = phase();
+        
+        // create a control that forwards and reverses the animation
         var shuttle = Control.shuttle(active, 1000);
 
+        // create the animation for the display-property
         Timeline.create().
             frame({display: 'none'}).
             stepIn(500).
             frame({display: 'block'}).
             playback($overlay, shuttle);
 
+        // create the animation for the opacity-property
         Timeline.create().
             frame({opacity: 0}).
             linear(500).
@@ -41,6 +47,7 @@
     }
 
     function modal(maxWidth, maxHeight, text) {
+        // create the modal
         var $modal = $('<div></div>').
             css({
                 borderRadius: 10
@@ -48,14 +55,19 @@
             addClass('modal').
             appendTo($('body'));
 
+        // create the content pane
         var $content = $('<div></div>').
             addClass('modal-content').
             text(text).
             appendTo($modal);
 
+        // create a phase that determines when the modal should be shown
         var active = phase();
+        
+        // create a control to forward and reverse the animation
         var shuttle = Control.shuttle(active, 1000);
 
+        // create the animation for the modal
         Timeline.create().
             frame({
                 display: 'none',
@@ -80,6 +92,7 @@
             }).
             playback($modal, shuttle);
 
+        // create the animation for the content pane
         Timeline.create().
             frame({display: 'none'}).
             stepOut(1000).
@@ -89,13 +102,14 @@
         return active;
     }
 
-    var active = phase();
+    // create an event to trigger when the the overlay+modal should be hidden
     var close = event();
+    
+    // create a phase that determines when the overlay+modal should be shown
+    var active = $('button').event('click').til(close);
 
+    // connect the overlay and the model to this phase
     active(overlay(0.5, close));
     active(modal(300, 200, 'Zoomah!'));
-
-    $('button').click(function () {
-        close.one()(active());
-    });
 }());
+

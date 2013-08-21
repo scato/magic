@@ -24,7 +24,8 @@ module.exports = function (Base) {
             
             this.fields().forEach(function (key) {
                 if (json.hasOwnProperty(key)) {
-                    instance[key](json[key]);
+                    // reassign so as to work with Value objects
+                    instance = instance[key](json[key]);
                 }
             });
             

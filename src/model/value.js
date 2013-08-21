@@ -20,6 +20,9 @@ function fixed(name, value) {
 module.exports = Json(Root.create()).create().
     override('field', function (base) {
         return function (name, init) {
+            // register field for use with fromJson and toJson
+            this.fields(name);
+            
             var value = init ? init() : undefined;
             
             return this.def(name, fixed(name, value));

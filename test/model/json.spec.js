@@ -2,6 +2,7 @@
 
 var Root = require('../../src/root'),
     Json = require('../../src/model/json'),
+    Value = require('../../src/model/value'),
     list = require('../../src/magic').list;
 
 describe("Json", function () {
@@ -33,6 +34,19 @@ describe("Json", function () {
             expect(instance.is(Example)).toBe(true);
             expect(instance.id()).toBe(1);
             expect(instance.name()).toBe('test');
+        });
+        
+        it("also works on Value objects", function () {
+            var Point = Value.create().
+                field('x').
+                field('y');
+            
+            var json = {x: 5, y: 10};
+            var instance = Point.fromJson(json);
+            
+            expect(instance.is(Point)).toBe(true);
+            expect(instance.x()).toBe(5);
+            expect(instance.y()).toBe(10);
         });
     });
     

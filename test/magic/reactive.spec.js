@@ -19,7 +19,7 @@ describe("reactive", function () {
         expect(a()).toBe("bar");
     });
 
-    it("is an event", function () {
+    it("is like an event", function () {
         var a = reactive();
         var foo = jasmine.createSpy('foo');
 
@@ -32,5 +32,19 @@ describe("reactive", function () {
 
         a("two");
         expect(foo).not.toHaveBeenCalledWith("two");
+    });
+
+    describe("is", function () {
+        it("returns true if given reactive", function () {
+            var a = reactive();
+
+            expect(a.is(reactive)).toBe(true);
+        });
+
+        it("returns false if given something else", function () {
+            var a = reactive();
+
+            expect(a.is({})).toBe(false);
+        });
     });
 });

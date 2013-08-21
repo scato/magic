@@ -6,13 +6,20 @@ describe("Value", function () {
     var Point = Value.create().
         field('x', function () { return 0; }).
         field('y', function () { return 0; });
-    
+        
     describe("field", function () {
         it("sets defaults using initializers", function () {
             var p = Point.create();
             
             expect(p.x()).toBe(0);
             expect(p.y()).toBe(0);
+        });
+        
+        it("uses undefined as a default without an initializer", function () {
+            var Example = Value.create().
+                field('foo');
+            
+            expect(Example.foo()).toBe(undefined);
         });
         
         it("always returns a new instance", function () {

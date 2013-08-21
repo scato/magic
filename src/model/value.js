@@ -1,6 +1,7 @@
 "use strict";
 
 var Root = require('../root');
+var Json = require('./json');
 
 function fixed(name, value) {
     return function () {
@@ -16,12 +17,12 @@ function fixed(name, value) {
     };
 }
 
-module.exports = Root.create().
+module.exports = Json(Root.create()).create().
     override('field', function (base) {
         return function (name, init) {
-            var value = init();
+            var value = init ? init() : undefined;
             
-            return this.def(name, fixed(name, init()));
+            return this.def(name, fixed(name, value));
         };
     });
 

@@ -6,7 +6,7 @@ require('./').def('override', function (name, factory) {
     }
 
     if (this.hasOwnProperty(name)) {
-        throw new Error("The method 'foo' already exists on this prototype");
+        throw new Error("The method '" + name + "' already exists on this prototype");
     }
 
     var base = this[name];

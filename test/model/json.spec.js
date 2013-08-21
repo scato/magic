@@ -1,11 +1,29 @@
 "use strict";
 
-var Entity = require('../../src/model/entity');
+var Root = require('../../src/root'),
+    Json = require('../../src/model/json'),
+    list = require('../../src/magic').list;
 
-describe("Entity", function () {
-    var Example = Entity.create().
+describe("Json", function () {
+    var Example = Json(Root.create()).
         field('id').
         field('name');
+    
+    describe("fields", function () {
+        it("is a list", function () {
+            expect(Example.ref('fields').is(list)).toBe(true);
+        });
+        
+        it("contains a list of fields defined on the entity", function () {
+            expect(Example.fields()).toEqual(['id', 'name']);
+        });
+        
+        it("is copied to instances automatically", function () {
+            var instance = Example.create();
+            
+            expect(instance.fields()).toEqual(['id', 'name']);
+        });
+    });
     
     describe("fromJson", function () {
         it("turns the result of JSON.parse() into an instance", function () {

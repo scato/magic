@@ -1,13 +1,14 @@
 "use strict";
 
-var event   = require('../../src/magic').event,
-    phase   = require('../../src/magic').phase,
-    have    = require('../../src/magic').effect.have,
-    on      = require('../../src/magic').effect.on,
-    once    = require('../../src/magic').effect.once,
-    until   = require('../../src/magic').effect.until,
-    during  = require('../../src/magic').effect.during,
-    between = require('../../src/magic').effect.between;
+var event     = require('../../src/magic').event,
+    phase     = require('../../src/magic').phase,
+    have      = require('../../src/magic').effect.have,
+    on        = require('../../src/magic').effect.on,
+    once      = require('../../src/magic').effect.once,
+    until     = require('../../src/magic').effect.until,
+    during    = require('../../src/magic').effect.during,
+    between   = require('../../src/magic').effect.between,
+    permanent = require('../../src/magic').effect.permanent;
 
 describe("effect", function () {
     // the top undo-scope is exit
@@ -227,6 +228,46 @@ describe("effect", function () {
 
             exit();
             expect(bar).toHaveBeenCalled();
+        });
+    });
+    
+    describe("permanent", function () {
+        it("applies the block immidiately", function () {
+            var bar = jasmine.createSpy('bar');
+            var foo = jasmine.createSpy('foo').andReturn(bar);
+            
+            permanent(function () {
+                have(foo());
+            });
+            
+            expect(foo).toHaveBeenCalled();
+            expect(bar).not.toHaveBeenCalled();
+        });
+            
+        it("returns an observable to cancel the block", function () {
+            var bar = jasmine.createSpy('bar');
+            var foo = jasmine.createSpy('foo').andReturn(bar);
+            
+            var undo = permanent(function () {
+                have(foo());
+            });
+            
+            undo();
+            
+            expect(bar).toHaveBeenCalled();
+        });
+            
+        it("does not cancel the block if the outer scope is triggered", function () {
+            var bar = jasmine.createSpy('bar');
+            var foo = jasmine.createSpy('foo').andReturn(bar);
+            
+            permanent(function () {
+                have(foo());
+            });
+            
+            exit();
+            
+            expect(bar).not.toHaveBeenCalled();
         });
     });
 });

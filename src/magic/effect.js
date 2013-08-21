@@ -10,13 +10,14 @@ function have(cancel) {
 }
 
 function on(observable, block) {
-    var inner = undo;
+    var outer = undo;
     
-    exit(observable(function (value) {
-        var outer = undo;
-        undo = inner;
-        block(value);
-        undo = outer;
+    outer(observable(function (value) {
+        var inner = permanent(function () {
+            block(value);
+        });
+        
+        outer(inner);
     }));
 }
 
@@ -25,12 +26,9 @@ function once(observable, block) {
 }
 
 function until(observable, block) {
-    var inner = magic.event();
-    var outer = undo;
-    
-    undo = inner;
-    block();
-    undo = outer;
+    var inner = permanent(function () {
+        block();
+    });
     
     observable(inner);
     undo(inner);
@@ -40,13 +38,11 @@ function during(interval, block) {
     var outer = undo;
     
     outer(interval(function (value) {
-        var inner = magic.event();
+        var inner = permanent(function () {
+            block(value);
+        });
         
         outer(inner);
-        
-        undo = inner;
-        block(value);
-        undo = outer;
         
         return inner;
     }));
@@ -60,12 +56,23 @@ function between(interval, block) {
     });
 }
 
-exports.exit    = exit;
+function permanent(block) {
+    var inner = magic.event();
+    var outer = undo;
+    
+    undo = inner;
+    block();
+    undo = outer;
+    
+    return inner;
+}
 
-exports.have    = have;
-exports.on      = on;
-exports.once    = once;
-exports.until   = until;
-exports.during  = during;
-exports.between = between;
+exports.between   = between;
+exports.during    = during;
+exports.exit    = exit;
+exports.have      = have;
+exports.on        = on;
+exports.once      = once;
+exports.permanent = permanent;
+exports.until     = until;
 

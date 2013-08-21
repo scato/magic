@@ -32,6 +32,31 @@ describe("expr", function () {
         expect(c()).toBe(5);
     });
 
+    it("is fires on change", function () {
+        var a = reactive(1);
+        var b = reactive(2);
+        var c = expr(function () {
+            return a() + b();
+        });
+        
+        var foo = jasmine.createSpy('foo');
+        
+        c(foo);
+        b(4);
+        
+        expect(foo).toHaveBeenCalledWith(5);
+    });
+
+    it("cannot be set", function () {
+        var a = expr(function () {
+            return 42;
+        });
+        
+        expect(function () {
+            a(43);
+        }).toThrow(new Error("Cannot set an expr"));
+    });
+
     describe("is", function () {
         it("returns true if given reactive", function () {
             var a = expr(function () {

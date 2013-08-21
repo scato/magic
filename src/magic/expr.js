@@ -15,10 +15,17 @@ function expr(evaluate) {
         // export the scope
         expr.update = inner;
         
-        // the on-effect in the reactive getter is valid until next change
-        change(magic.effect.permanent(function () {
+        // evaluating this expr may trigger reactive getters
+        // these getter apply on-effects to match the update function to change events
+        var undo = magic.effect.permanent(function () {
             value = evaluate();
-        }));
+        });
+        
+        // fire the change for this new value (and cancel all previous on-effects)
+        change(value);
+        
+        // the on-effects should be valid until next change
+        change(undo);
         
         // revert the scope
         expr.update = outer;
@@ -33,7 +40,7 @@ function expr(evaluate) {
         } else if(typeof arguments[0] === 'function') {
             return change(arguments[0]);
         } else {
-            
+            throw new Error("Cannot set an expr");
         }
     });
 }

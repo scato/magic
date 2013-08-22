@@ -7,16 +7,13 @@ var Root = require('../../src/root'),
 
 describe("Json", function () {
     var Example = Json(Root.create()).
+        fields(['id', 'name']).
         field('id').
         field('name');
     
     describe("fields", function () {
         it("is a list", function () {
             expect(Example.ref('fields').is(list)).toBe(true);
-        });
-        
-        it("contains a list of fields defined on the entity", function () {
-            expect(Example.fields()).toEqual(['id', 'name']);
         });
         
         it("is copied to instances automatically", function () {

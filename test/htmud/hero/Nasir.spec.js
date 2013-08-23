@@ -1,6 +1,6 @@
 "use strict";
 
-var Hero  = require('../../src/htmud/hero'),
+var Hero  = require('../../../src/htmud/hero'),
     Nasir = require('../../../src/htmud/hero/Nasir');
 
 describe("heroes", function () {

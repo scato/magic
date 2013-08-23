@@ -1,4 +1,7 @@
-var Root = require('../root');
+"use strict";
+
+var Root = require('./root'),
+    list = require('../magic').list;
 
 module.exports = Root.create().
-    field('name');
+    list('wields');

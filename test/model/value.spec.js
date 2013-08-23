@@ -9,7 +9,7 @@ describe("Value", function () {
         
     describe("field", function () {
         it("sets defaults using initializers", function () {
-            var p = Point.create();
+            var p = Point;
             
             expect(p.x()).toBe(0);
             expect(p.y()).toBe(0);
@@ -23,25 +23,33 @@ describe("Value", function () {
         });
         
         it("always returns a new instance", function () {
-            var p = Point.create();
-            var q = p.x(10);
+            var p = Point.
+                x(5).
+                y(5);
+            
+            var q = p.
+                x(10);
             
             expect(q).not.toBe(p);
         });
         
         it("sets the new value while leaving the original unchanged", function () {
-            var p = Point.create();
-            var q = p.x(10).y(5);
+            var p = Point.
+                x(5).
+                y(5);
+            
+            var q = p.y(10);
+            
             var r = q.x(20);
             
-            expect(p.x()).toBe(0);
-            expect(p.y()).toBe(0);
+            expect(p.x()).toBe(5);
+            expect(p.y()).toBe(5);
             
-            expect(q.x()).toBe(10);
-            expect(q.y()).toBe(5);
+            expect(q.x()).toBe(5);
+            expect(q.y()).toBe(10);
             
             expect(r.x()).toBe(20);
-            expect(r.y()).toBe(5);
+            expect(r.y()).toBe(10);
         });
     });
 });

@@ -38,4 +38,28 @@ describe("dynamic", function () {
 
         expect(a()).toBe("bar");
     });
+
+    describe("is", function () {
+        it("returns true if given dynamic", function () {
+            var a = dynamic();
+
+            expect(a.is(dynamic)).toBe(true);
+        });
+
+        it("returns false if given something else", function () {
+            var a = dynamic();
+
+            expect(a.is({})).toBe(false);
+        });
+    });
+
+    describe("bind", function () {
+        it("returns a dynamic value", function () {
+            var context = {};
+            var a = dynamic();
+            var b = a.bind(context);
+
+            expect(b.is(dynamic)).toBe(true);
+        });
+    });
 });

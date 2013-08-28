@@ -22,6 +22,8 @@ function reactive(value) {
             return change(arguments[0]);
         } else {
             change(value = arguments[0]);
+            
+            return this;
         }
     });
 }
@@ -29,6 +31,10 @@ function reactive(value) {
 function create(left) {
     left.is = function (right) {
         return right === magic.reactive;
+    };
+
+    left.bind = function () {
+        return create(Function.prototype.bind.apply(left, arguments));
     };
     
     return left;

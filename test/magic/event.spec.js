@@ -46,7 +46,7 @@ describe("event", function () {
         expect(foo.calls[0].object).toBe(context);
     });
 
-    it("makes the trigger return its context", function () {
+    it("returns the context object when triggered", function () {
     	var a = event();
     	var context = {};
     	

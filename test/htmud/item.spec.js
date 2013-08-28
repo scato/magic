@@ -1,6 +1,6 @@
 "use strict";
 
-var Item  = require('../../src/htmud/character'),
+var Item  = require('../../src/htmud/item'),
     Root  = require('../../src/htmud/root'),
     field = require('../../src/magic').field,
     event = require('../../src/magic').event;

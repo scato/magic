@@ -6,7 +6,7 @@ var Root = require('../../src/htmud/root'),
 describe("Root", function () {
     describe("name", function () {
         it("is a field", function () {
-            expect(Character.ref('name').is(field)).toBe(true);
+            expect(Root.ref('name').is(field)).toBe(true);
         });
     });
 });

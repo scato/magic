@@ -27,5 +27,13 @@ describe("Root", function () {
             expect(foo).toHaveBeenCalledWith('bar');
             expect(foo.calls[0].object).toBe(test);
         });
+
+        it("throws an error when the property is not defined", function () {
+            var Proto = Root.create();
+
+            expect(function () {
+                Proto.ref('foo');
+            }).toThrow(new Error("Object has no method 'foo'"));
+        });
     });
 });

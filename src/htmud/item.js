@@ -3,4 +3,6 @@
 var Root = require('./root');
 
 module.exports = Root.create().
-    field('bearer');
+    field('bearer').
+    event('stow').
+    event('drop');

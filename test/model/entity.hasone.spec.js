@@ -35,9 +35,7 @@ describe("Entity", function () {
     			var Sting = Item.create();
     			
     			Frodo.location(Sting);
-    		}).toThrow(new Error(
-    			"Type mismatch when assigning value to 'location'"
-    		));
+    		}).toThrow(new Error("Type mismatch"));
     	});
     	
     	it("fixes up a one-to-one association", function () {

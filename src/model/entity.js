@@ -3,14 +3,35 @@
 var Root = require('../root');
 var Json = require('./json');
 
-function one(value) {
-	value = value || null;
+function one(type, enter, exit) {
+	var value = null;
+	enter = enter || function () {};
+	exit = exit || function () {};
 	
 	return one.create(function () {
 		if (arguments.length === 0) {
 			return value;
 		} else {
-			value = arguments[0];
+			var prev = value;
+			var next = arguments[0];
+			
+			if (next !== null && type && !next.is(type)) {
+				throw new Error('Type mismatch');
+			}
+			
+			value = next;
+			
+			if (prev !== next) {
+				if (prev !== null) {
+					exit.call(this, prev);
+				}
+				
+				if (next !== null) {
+					enter.call(this, next);
+				}
+			}
+			
+			return this;
 		}
 	});
 }
@@ -22,6 +43,14 @@ one.create = function (left) {
 	
 	left.bind = function () {
 		return one.create(Function.prototype.bind.apply(left, arguments));
+	};
+	
+	left.fixup = function (entity) {
+		left(entity);
+	};
+		
+	left.revert = function (entity) {
+		left(null);
 	};
 	
 	return left;
@@ -43,7 +72,7 @@ function many(type, enter, exit) {
     			throw new Error('Type mismatch');
     		}
     		
-			value = arguments[0];
+			value = next;
 			
     		prev.filter(function (entity) {
     			return next.indexOf(entity) === -1;
@@ -68,14 +97,23 @@ many.create = function (left) {
 	};
 	
 	left.add = function (entity) {
-		left.remove(entity);
-		left(left().concat(entity));
+		left(left().filter(function (any) {
+			return any !== entity;
+		}).concat(entity));
 	};
 	
 	left.remove = function (entity) {
 		left(left().filter(function (any) {
 			return any !== entity;
 		}));
+	};
+	
+	left.fixup = function (entity) {
+		left.add(entity);
+	};
+	
+	left.revert = function (entity) {
+		left.remove(entity);
 	};
 	
 	return left;
@@ -100,19 +138,11 @@ function remove(array, value) {
 }
 
 function reset(ref, value) {
-	if (isArray(ref())) {
-		ref(remove(ref(), value));
-	} else {
-		ref(null);
-	}
+	ref.revert(value);
 }
 
 function fixup(ref, value) {
-	if (isArray(ref())) {
-		ref(add(ref(), value));
-	} else {
-		ref(value);
-	}
+	ref.fixup(value);
 }
 
 module.exports = Json(Root.create()).
@@ -125,36 +155,17 @@ module.exports = Json(Root.create()).
     }).
     def('hasOne', function (type, name, inverse) {
     	return this.lazy(name, function () {
-    		var value = null;
+    		var value;
     		
-    		return function () {
-    			if (arguments.length === 0) {
-    				return value;
-    			} else {
-    				var prev = value;
-    				var next = arguments[0];
-    				
-    				if (next !== null && !next.is(type)) {
-    					throw new Error('Type mismatch when assigning value to \'' + name + '\'');
-    				}
-    				
-    				if (value === next) {
-    					return this;
-    				}
-    				
-    				value = next;
-    				
-    				if (inverse !== undefined && prev !== null) {
-    					reset(prev.ref(inverse), this);
-    				}
-    				
-    				if (inverse !== undefined && next !== null) {
-    					fixup(next.ref(inverse), this);
-    				}
-    				
-    				return this;
-    			}
-    		};
+    		if (inverse) {
+	    		return one(type, function (enter) {
+	    			fixup(enter.ref(inverse), this);
+	    		}, function (exit) {
+    				reset(exit.ref(inverse), this);
+	    		});
+    		} else {
+	    		return one(type);
+    		}
     	});
     }).
     def('hasMany', function (type, name, inverse) {

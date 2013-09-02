@@ -3,10 +3,12 @@
 var Root = require('../root');
 var Json = require('./json');
 
-function one(type, enter, exit) {
+function isArray(value) {
+	return Object.prototype.toString.call(value) === '[object Array]';
+}
+
+function one(type, inverse) {
 	var value = null;
-	enter = enter || function () {};
-	exit = exit || function () {};
 	
 	return one.create(function () {
 		if (arguments.length === 0) {
@@ -21,13 +23,13 @@ function one(type, enter, exit) {
 			
 			value = next;
 			
-			if (prev !== next) {
+			if (inverse && prev !== next) {
 				if (prev !== null) {
-					exit.call(this, prev);
+					prev.ref(inverse).revert(this);
 				}
 				
 				if (next !== null) {
-					enter.call(this, next);
+					next.ref(inverse).fixup(this);
 				}
 			}
 			
@@ -56,10 +58,8 @@ one.create = function (left) {
 	return left;
 };
 
-function many(type, enter, exit) {
+function many(type, inverse) {
 	var value = [];
-	enter = enter || function () {};
-	exit = exit || function () {};
 	
 	return many.create(function () {
 		if (arguments.length === 0) {
@@ -74,13 +74,19 @@ function many(type, enter, exit) {
     		
 			value = next;
 			
-    		prev.filter(function (entity) {
-    			return next.indexOf(entity) === -1;
-    		}).forEach(exit, this);
-			
-    		next.filter(function (entity) {
-    			return prev.indexOf(entity) === -1;
-    		}).forEach(enter, this);
+			if (inverse) {
+	    		prev.filter(function (entity) {
+    				return next.indexOf(entity) === -1;
+    			}).forEach(function (entity) {
+    				entity.ref(inverse).revert(this);
+    			}, this);
+				
+	    		next.filter(function (entity) {
+    				return prev.indexOf(entity) === -1;
+    			}).forEach(function (entity) {
+    				entity.ref(inverse).fixup(this);
+    			}, this);
+    		}
     		
     		return this;
 		}
@@ -119,32 +125,6 @@ many.create = function (left) {
 	return left;
 };
 
-function isArray(value) {
-	return Object.prototype.toString.call(value) === '[object Array]';
-}
-
-function add(array, value) {
-	var tmp = many();
-	tmp(array);
-	tmp.add(value);
-	return tmp();
-}
-
-function remove(array, value) {
-	var tmp = many();
-	tmp(array);
-	tmp.remove(value);
-	return tmp();
-}
-
-function reset(ref, value) {
-	ref.revert(value);
-}
-
-function fixup(ref, value) {
-	ref.fixup(value);
-}
-
 module.exports = Json(Root.create()).
     override('field', function (base) {
         return function (name, init) {
@@ -155,32 +135,12 @@ module.exports = Json(Root.create()).
     }).
     def('hasOne', function (type, name, inverse) {
     	return this.lazy(name, function () {
-    		var value;
-    		
-    		if (inverse) {
-	    		return one(type, function (enter) {
-	    			fixup(enter.ref(inverse), this);
-	    		}, function (exit) {
-    				reset(exit.ref(inverse), this);
-	    		});
-    		} else {
-	    		return one(type);
-    		}
+    		return one(type, inverse);
     	});
     }).
     def('hasMany', function (type, name, inverse) {
     	return this.lazy(name, function () {
-    		var value;
-    		
-    		if (inverse) {
-    			return many(type, function (enter) {
-    				fixup(enter.ref(inverse), this);
-    			}, function (exit) {
-    				reset(exit.ref(inverse), this);
-    			});
-    		} else {
-    			return many(type);
-    		}
+   			return many(type, inverse);
     	});
     });
 

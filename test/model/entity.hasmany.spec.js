@@ -35,9 +35,7 @@ describe("Entity", function () {
     			var Rivendell = Site.create();
     			
     			Frodo.items([Rivendell]);
-    		}).toThrow(new Error(
-    			"Type mismatch when assigning value to 'items'"
-    		));
+    		}).toThrow(new Error("Type mismatch"));
     	});
     	
     	it("fixes up a many-to-one association", function () {

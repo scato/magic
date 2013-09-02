@@ -4,7 +4,7 @@ var Entity = require('../../src/model/entity'),
     field = require('../../src/magic').field;
 
 describe("Entity", function () {
-	var Location = Entity.create();
+	var Site = Entity.create();
 	var Character = Entity.create();
 	var Item = Entity.create();
 	var Player = Entity.create();
@@ -14,12 +14,16 @@ describe("Entity", function () {
 	
 	Character.
 		hasOne(Player, 'player', 'character').
-		hasOne(Location, 'location').
-		hasMany(Item, 'items', 'bearer');
+		hasOne(Site, 'location').
+		hasMany(Item, 'items', 'bearer').
+		hasMany(Site, 'homes', 'denizens');
 	
 	Item.
 		hasOne(Character, 'bearer', 'items');
 		
+	Site.
+		hasMany(Character, 'denizens', 'homes');
+	
     describe("hasOne", function () {
     	it("has a default value of null", function () {
     		expect(Character.location()).toBe(null);
@@ -81,7 +85,8 @@ describe("Entity", function () {
     		
     		Sting.bearer(Sam);
     		
-    		expect(Frodo.items()).toEqual([MithrilCoat]);
+    		expect(Frodo.items().length).toBe(1);
+    		expect(Frodo.items()[0]).toBe(MithrilCoat);
     	});
     });
 });

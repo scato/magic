@@ -7,7 +7,7 @@ require('./').def('lazy', function (name, factory) {
     function init(context) {
         if (context === root) {
             if (inner === undefined) {
-                inner = factory();
+                inner = factory.call(context);
             }
 
             return inner;

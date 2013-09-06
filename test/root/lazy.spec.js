@@ -45,7 +45,7 @@ describe("Root", function () {
             expect(factory.callCount).toBe(1);
         });
 
-        it("calls the factory method once for each instance", function () {
+        it("calls the factory method once for each instance, on that instance", function () {
             var Proto = Root.create();
             var factory = jasmine.createSpy('factory');
 
@@ -60,6 +60,8 @@ describe("Root", function () {
             test2.foo();
 
             expect(factory.callCount).toBe(2);
+            expect(factory.calls[0].object).toBe(test1);
+            expect(factory.calls[1].object).toBe(test2);
         });
 
         it("lets you access the result of the factory through ref", function () {

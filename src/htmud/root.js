@@ -1,6 +1,6 @@
 "use strict";
 
-var Root = require('../root');
+var Entity = require('../model/entity');
 
-module.exports = Root.create().
+module.exports = Entity.create().
     field('name');

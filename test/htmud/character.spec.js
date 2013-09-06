@@ -13,15 +13,9 @@ describe("Character", function () {
     });
     
     describe("items", function () {
-        it("is a list", function () {
-            expect(Character.ref('wields').is(list)).toBe(true);
-        });
     });
     
     describe("wields", function () {
-        it("is a list", function () {
-            expect(Character.ref('wields').is(list)).toBe(true);
-        });
     });
     
     describe("mayWield", function () {

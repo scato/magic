@@ -18,20 +18,12 @@ describe("Item", function () {
     });
     
     describe("bearer", function () {
-        it("is a field", function () {
-            expect(Item.ref('bearer').is(field)).toBe(true);
-        });
-        
         it("has a default value of null", function () {
         	expect(Item.bearer()).toBe(null);
         });
     });
     
     describe("take", function () {
-        it("is an event", function () {
-            expect(Item.ref('take').is(event)).toBe(true);
-        });
-        
         it("sets the bearer to the character that took it", function () {
         	var item = Item.create();
         	var character = Character.create();
@@ -52,10 +44,6 @@ describe("Item", function () {
     });
     
     describe("wield", function () {
-        it("is an event", function () {
-            expect(Item.ref('wield').is(event)).toBe(true);
-        });
-        
         it("adds an item to its bearers list", function () {
         	var item = Item.create();
         	var character = Character.create();
@@ -65,7 +53,9 @@ describe("Item", function () {
         	
         	expect(character.wields().indexOf(item)).not.toBe(-1);
         });
-        
+    });
+    
+    describe("stow", function () {
         it("removes the item from the list when it is stowed", function () {
         	var item = Item.create();
         	var character = Character.create();
@@ -76,30 +66,9 @@ describe("Item", function () {
         	
         	expect(character.wields().indexOf(item)).toBe(-1);
         });
-        
-        it("removes the item from the list when it is dropped", function () {
-        	var item = Item.create();
-        	var character = Character.create();
-        	
-        	item.take(character);
-        	item.wield();
-        	item.drop();
-        	
-        	expect(character.wields().indexOf(item)).toBe(-1);
-        });
-    });
-    
-    describe("stow", function () {
-        it("is an event", function () {
-            expect(Item.ref('stow').is(event)).toBe(true);
-        });
     });
     
     describe("drop", function () {
-        it("is an event", function () {
-            expect(Item.ref('drop').is(event)).toBe(true);
-        });
-        
         it("sets the bearer to null", function () {
         	var item = Item.create();
         	var character = Character.create();
@@ -118,6 +87,17 @@ describe("Item", function () {
         	item.drop();
         	
         	expect(character.items().indexOf(item)).toBe(-1);
+        });
+        
+        it("removes the item from the list of wielded items", function () {
+        	var item = Item.create();
+        	var character = Character.create();
+        	
+        	item.take(character);
+        	item.wield();
+        	item.drop();
+        	
+        	expect(character.wields().indexOf(item)).toBe(-1);
         });
     });
 });

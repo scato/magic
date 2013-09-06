@@ -55,6 +55,10 @@ one.create = function (left) {
 
 Entity.
     def('hasOne', function (type, name, inverse) {
+	if (!(type.is && type.is(Entity))) {
+		throw new Error("Type should be an Entity");
+	}
+	
     	return this.lazy(name, function () {
     		return one(type, inverse);
     	});

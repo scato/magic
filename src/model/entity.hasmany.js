@@ -75,6 +75,10 @@ many.create = function (left) {
 
 Entity.
     def('hasMany', function (type, name, inverse) {
+	if (!(type.is && type.is(Entity))) {
+		throw new Error("Type should be an Entity");
+	}
+	
     	return this.lazy(name, function () {
    			return many(type, inverse);
     	});

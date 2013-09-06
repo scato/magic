@@ -25,6 +25,13 @@ describe("Entity", function () {
 		hasMany(Character, 'denizens', 'homes');
 		
     describe("hasMany", function () {
+        it("rejects non-entity types", function () {
+        	expect(function () {
+        		Entity.create().
+        			hasMany({}, 'foo');
+        	}).toThrow(new Error("Type should be an Entity"));
+        });
+        
     	it("has a default value of empty list", function () {
     		expect(Character.items()).toEqual([]);
     	});
